@@ -42,12 +42,11 @@ class CrawlerTest(unittest.TestCase):
 
     def test_check_instrument_type(self):
         row = ['VIEW', '2016014255', 'DEED OF TRUST', '12/01/2016', 'MILLER, EVELYN']
-        self.assert_(Tahema.check_instrument_type(row),
+        self.assertTrue(Tahema.check_instrument_type(row),
             'row has a deed of trust')
         row = [1, 2, 'DEED', 4, 5]
-        self.assert_(Tahema.check_instrument_type(row),
+        self.assertTrue(Tahema.check_instrument_type(row),
             'row has check instrument type deed')
-
 
 
 if __name__ == '__main__':
