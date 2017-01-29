@@ -66,7 +66,8 @@ class Tahema(object):
         for row in self.driver.find_elements_by_css_selector("table"):
             cells = row.find_elements_by_tag_name("td")
             for cell in cells:
-                yield cell.text
+                cell_text = cell.text
+                yield (cell, cell_text) if "VIEW" in cell_text else cell_text
 
     def tabulate_data(self):
         """
