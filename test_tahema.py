@@ -12,8 +12,8 @@ class CrawlerTest(unittest.TestCase):
         pass
 
     def test_get_official_records(self):
+        website = "./tahema_home.html"
         with Tahema(website) as t:
-            website = "./tahema_home.html"
             t = Tahema(website)
             self.assertTrue("TehamaPublic.CountyRecords.com" in t.driver.title)
 
