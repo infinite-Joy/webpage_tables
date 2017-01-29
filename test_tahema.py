@@ -30,6 +30,13 @@ class CrawlerTest(unittest.TestCase):
         tops = list(itertools.islice(t.tabulate_data(), 5))
         assert tops[0] == ['VIEW', '2016014255', 'DEED OF TRUST', '12/01/2016', 'MILLER, EVELYN']
 
+    def test_check_instrument_type(self):
+        row = ['VIEW', '2016014255', 'DEED OF TRUST', '12/01/2016', 'MILLER, EVELYN']
+        assert Tahema.check_instrument_type(row)
+        row = [1, 2, 'DEED', 4, 5]
+        assert Tahema.check_instrument_type(row)
+
+
 
 if __name__ == '__main__':
     unittest.main()

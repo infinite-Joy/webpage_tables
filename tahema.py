@@ -59,16 +59,31 @@ class Tahema(object):
         print(self.driver.current_url)
 
     def _get_all_table_elements(self):
+        """
+        get the tabular data from the webpage using css idebtifiers
+        will give a lot of null and empty strings as well
+        """
         for row in self.driver.find_elements_by_css_selector("table"):
             cells = row.find_elements_by_tag_name("td")
             for cell in cells:
                 yield cell.text
 
     def tabulate_data(self):
+        """
+        clean the tabular data from the website and give a list of lists
+        """
         data = [single_data for single_data in self._get_all_table_elements()]
         view_indices = (i for i, item in enumerate(data) if "VIEW" in item)
         grouped_data = ([data[i + j] for j in range(5)] for i in view_indices)
         return grouped_data
+
+    @staticmethod
+    def check_instrument_type(row):
+        """
+        instrument type will be checked if it is deed it deed of trust
+        """
+        instrument_type = row[2]
+        return instrument_type == "DEED" or "DEED OF TRUST"
 
     def build_csv(self, grouped_data):
         pass
