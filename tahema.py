@@ -21,6 +21,9 @@ class Tahema(object):
         self.driver.set_window_size(1120, 550)
         self.driver.get(website)
 
+    def __enter__(self):
+        return self
+
     def get_official_records(self):
         official_records_xpath = "/html/body/div/center/p/select/option[2]"
         official_records_elem = None
@@ -67,7 +70,10 @@ class Tahema(object):
             cells = row.find_elements_by_tag_name("td")
             for cell in cells:
                 cell_text = cell.text
-                yield (cell, cell_text) if "VIEW" in cell_text else cell_text
+                if "VIEW" in cell_text:
+                    yield (cell, cell_text)
+                else:
+                    yield cell_text
 
     def tabulate_data(self):
         """
@@ -89,11 +95,21 @@ class Tahema(object):
     def build_csv(self, grouped_data):
         pass
 
+    def __exit__(self, *args):
+        """
+        give all the exit code
+        this will execute when the browser leaves the with block
+        """
+        self.driver.quit()
+
 
 if __name__ == '__main__':
     website = "http://tehamapublic.countyrecords.com/scripts/hfweb.asp?formuser=public&Application=TEH"
-    t = Tahema(website)
-    t.get_official_records()
-    t.search_by_recording_date("12/01/2016", "12/01/2016")
-    # t.get_all_table_elements()
-    t.tabulate_data()
+    with Tahema(website) as t:
+        t.get_official_records()
+        t.search_by_recording_date("12/01/2016", "12/01/2016")
+        import time
+        for x in t._get_all_table_elements():
+            time.sleep(1)
+            print(x)
+        # t.tabulate_data()
