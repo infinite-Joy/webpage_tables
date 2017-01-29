@@ -48,6 +48,13 @@ class CrawlerTest(unittest.TestCase):
         self.assertTrue(Tahema.check_instrument_type(row),
             'row has check instrument type deed')
 
+    def test_parse_view_page(self):
+        website = "./view_page.html"
+        with Tahema(website) as t:
+            self.assertEqual(t.parse_view_page(),
+                actual,
+                'message')
+
 
 if __name__ == '__main__':
     unittest.main()

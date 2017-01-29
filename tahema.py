@@ -92,6 +92,15 @@ class Tahema(object):
         instrument_type = row[2]
         return instrument_type == "DEED" or "DEED OF TRUST"
 
+    def click_on_view(self, row):
+        if self.check_instrument_type(row):
+            view_element = row[0][0]
+            view_element.click()
+
+    def parse_view_page(self):
+        pass
+
+
     def build_csv(self, grouped_data):
         pass
 
