@@ -19,16 +19,20 @@ class CrawlerTest(unittest.TestCase):
 
     def test__get_all_table_elements(self):
         website = "./tahema_county_table_data.html"
-        t = Tahema(website)
-        for item in t._get_all_table_elements():
+
+        def execute_test_case(item):
             try:
                 if item[2] == 'DEED OF TRUST':
-                    # self.assertFalse(item, 1)
-                    self.assertRaises(TypeError)
-            except IndexError:
-                # handling this in case of item not being build.
-                # we only want to see if there is atleast one valid item
-                pass
+                    assertTrue(isinstance(item[0], tuple))
+                except IndexError:
+                    # handling this in case of item not being build.
+                    # we only want to see if there is atleast one valid item
+                    pass
+
+        with Tahema(website) as t:
+            for item in t._get_all_table_elements():
+                execute_test_case(item)
+
 
     def test_tabulate_data(self):
         website = "./tahema_county_table_data.html"
