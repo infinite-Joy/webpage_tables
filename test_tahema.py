@@ -48,6 +48,17 @@ class CrawlerTest(unittest.TestCase):
         self.assertTrue(Tahema.check_instrument_type(row),
             'row has check instrument type deed')
 
+    @unittest.expectedFailure
+    def test_click_on_view(self):
+        website = "./tahema_county_table_data.html"
+        with Tahema(website) as t:
+            tops = list(itertools.islice(t.tabulate_data(), 5))
+            t.click_on_view(tops[0])
+            self.fail(t.driver.current_url,
+                "something",
+                'the user moves to a webpage with title something: fix this test')
+
+
     def test_parse_view_page(self):
         website = "./view_page.html"
         with Tahema(website) as t:

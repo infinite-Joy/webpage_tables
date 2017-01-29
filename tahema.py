@@ -93,8 +93,12 @@ class Tahema(object):
         return instrument_type == "DEED" or "DEED OF TRUST"
 
     def click_on_view(self, row):
+        """
+        user sees that the instrument type is DEED and clicks on view_element
+        """
         if self.check_instrument_type(row):
             view_element = row[0][0]
+            print(view_element, "view element")
             view_element.click()
 
     def parse_view_page(self):
