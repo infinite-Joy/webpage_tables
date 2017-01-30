@@ -62,9 +62,19 @@ class CrawlerTest(unittest.TestCase):
     def test_parse_view_page(self):
         website = "./view_page.html"
         with Tahema(website) as t:
-            self.assertEqual(t.parse_view_page(),
-                actual,
-                'message')
+            table_text = [text for text in t.parse_view_page()]
+            self.assertTrue("document not available" in table_text,
+                'should give all the tabular data in view page')
+
+    def test_clean_view_page_date(self):
+        website = "./view_page.html"
+        with Tahema(website) as t:
+            table_text = [text for text in t.parse_view_page()]
+            res = t.clean_view_page_data(table_text)
+            print(res)
+            self.assertEqual(len(res),
+                6,
+                'only valid tabular data should come of the view page')
 
 
 if __name__ == '__main__':

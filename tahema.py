@@ -98,11 +98,28 @@ class Tahema(object):
         """
         if self.check_instrument_type(row):
             view_element = row[0][0]
-            print(view_element, "view element")
             view_element.click()
 
     def parse_view_page(self):
-        pass
+        """
+        look at the view page and get the results
+        """
+        for row in self.driver.find_elements_by_css_selector("table"):
+            cells = row.find_elements_by_tag_name("td")
+            for cell in cells:
+                yield cell.text
+
+    def get_starting_index(self, parsed_view_page_table):
+        for i, table_text in enumerate(parsed_view_page_table):
+            if "Document Number" in table_text:
+                return i
+
+    def clean_view_page_data(self, parsed_view_page_table):
+
+        start = self.get_starting_index(parsed_view_page_table)
+        documents = {parsed_view_page_table[i]: parsed_view_page_table[i+1] for i in range(start, start + 11, 2)}
+        return documents
+
 
 
     def build_csv(self, grouped_data):
@@ -117,12 +134,16 @@ class Tahema(object):
 
 
 if __name__ == '__main__':
-    website = "http://tehamapublic.countyrecords.com/scripts/hfweb.asp?formuser=public&Application=TEH"
+    # website = "http://tehamapublic.countyrecords.com/scripts/hfweb.asp?formuser=public&Application=TEH"
+    # with Tahema(website) as t:
+    #     t.get_official_records()
+    #     t.search_by_recording_date("12/01/2016", "12/01/2016")
+    #     import time
+    #     for x in t._get_all_table_elements():
+    #         time.sleep(1)
+    #         print(x)
+    #     # t.tabulate_data()
+    website = "./view_page.html"
     with Tahema(website) as t:
-        t.get_official_records()
-        t.search_by_recording_date("12/01/2016", "12/01/2016")
-        import time
-        for x in t._get_all_table_elements():
-            time.sleep(1)
-            print(x)
-        # t.tabulate_data()
+        for rows in t.parse_view_page():
+            print(rows)
