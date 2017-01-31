@@ -103,8 +103,10 @@ class Tahema(object):
         """
         data = [single_data for single_data in self._get_all_table_elements()]
         view_indices = (i for i, item in enumerate(data) if "VIEW" in item)
-        grouped_data = self.get_grouped_data(data, view_indices)
-        return grouped_data
+        for i in view_indices:
+            yield self.get_grouped_data(data, view_indices)
+        # grouped_data = self.get_grouped_data(data, view_indices)
+        # return grouped_data
 
     @staticmethod
     def check_instrument_type(row):
