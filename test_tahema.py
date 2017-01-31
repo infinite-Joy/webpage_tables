@@ -38,11 +38,12 @@ class CrawlerTest(unittest.TestCase):
         website = "./tahema_county_table_data.html"
         with Tahema(website) as t:
             data = [single_data for single_data in t._get_all_table_elements()]
-            view_indices = (i for i, item in enumerate(data) if "VIEW" in item)
-            tops = list(itertools.islice(data, 2))
+            tops = list(itertools.islice(data, 50))
             print(tops)
-            grouped_data = t.get_grouped_data(data, view_indices)
-            view_indices = (i for i, item in enumerate(data) if "VIEW" in item)
+            view_indices = (i for i, item in enumerate(tops) if "VIEW" in item)
+            print("view_indices", view_indices)
+            grouped_data = t.get_grouped_data(tops, view_indices)
+            print("grouped_data", grouped_data)
             self.assertEqual(grouped_data,
                 [[0, 1, 2, 3, 4], [13, 14, 15, 16, 17], [26, 27, 28, 29, 30], [39, 40, 41, 42, 43], [52, 53, 54, 55, 56], [65, 66, 67, 68, 69], [78, 79, 80, 81, 82]],
                 'test for get_grouped_data')
