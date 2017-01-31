@@ -75,13 +75,27 @@ class Tahema(object):
                 else:
                     yield cell_text
 
+    def get_grouped_data(self, data, view_indices):
+        # return ([data[i + j] for j in range(5)] for i in view_indices)
+        grouped_data = []
+        for i in view_indices:
+            k = [data[i + j] for j in range(5)]
+            grouped_data.append(k)
+            if self.check_instrument_type(k):
+                self.click_on_view(k)
+                parsed_view_page_table = self.parse_view_page()
+                grouped_data.append(self.clean_view_page_data(parsed_view_page_table))
+                # self.driver.key_down(Keys.CONTROL).send_keys(key.LEFT).key_up(Keys.CONTROL).perform()
+                self.driver.send_keys(Keys.LEFT_ALT) # go back
+        return grouped_data
+
     def tabulate_data(self):
         """
         clean the tabular data from the website and give a list of lists
         """
         data = [single_data for single_data in self._get_all_table_elements()]
         view_indices = (i for i, item in enumerate(data) if "VIEW" in item)
-        grouped_data = ([data[i + j] for j in range(5)] for i in view_indices)
+        grouped_data = self.get_grouped_data(data, view_indices)
         return grouped_data
 
     @staticmethod
