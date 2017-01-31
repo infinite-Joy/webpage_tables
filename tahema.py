@@ -1,4 +1,6 @@
 import os
+import  itertools
+import time
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -57,9 +59,10 @@ class Tahema(object):
 
         search_button_xpath = ("%s/p[4]/input[1]" % form_base_xpath)
         search_button = self.driver.find_element_by_xpath(search_button_xpath)
-        search_button.click()
 
-        print(self.driver.current_url)
+        # before each call there is a rate limiter of 1 second
+        time.sleep(1)
+        search_button.click()
 
     def _get_all_table_elements(self):
         """
@@ -75,23 +78,22 @@ class Tahema(object):
                 else:
                     yield cell_text
 
-    def get_grouped_data(self, data, view_indices):
+    def get_grouped_data(self, data, view_indx):
         # return ([data[i + j] for j in range(5)] for i in view_indices)
-        grouped_data = []
-        for i in view_indices:
-            k = [data[i + j] for j in range(5)]
+        while True:
+            grouped_data = []
+            k = [data[view_indx + j] for j in range(5)]
             grouped_data.append(k)
             try:
                 if self.check_instrument_type(k):
                     self.click_on_view(k)
-                    print("current_url",self.browser.current_url)
                     parsed_view_page_table = self.parse_view_page()
                     grouped_data.append(self.clean_view_page_data(parsed_view_page_table))
                     # self.driver.key_down(Keys.CONTROL).send_keys(key.LEFT).key_up(Keys.CONTROL).perform()
                     self.driver.send_keys(Keys.LEFT_ALT) # go back
             except TypeError:
                 pass
-        return grouped_data
+            yield grouped_data
 
     def tabulate_data(self):
         """
@@ -116,6 +118,9 @@ class Tahema(object):
         """
         if self.check_instrument_type(row):
             view_element = row[0][0]
+
+            # before each call there is a rate limiter of 1 second
+            time.sleep(3)
             view_element.click()
 
     def parse_view_page(self):
@@ -138,8 +143,6 @@ class Tahema(object):
         documents = {parsed_view_page_table[i]: parsed_view_page_table[i+1] for i in range(start, start + 11, 2)}
         return documents
 
-
-
     def build_csv(self, grouped_data):
         pass
 
@@ -152,16 +155,13 @@ class Tahema(object):
 
 
 if __name__ == '__main__':
-    # website = "http://tehamapublic.countyrecords.com/scripts/hfweb.asp?formuser=public&Application=TEH"
-    # with Tahema(website) as t:
-    #     t.get_official_records()
-    #     t.search_by_recording_date("12/01/2016", "12/01/2016")
-    #     import time
-    #     for x in t._get_all_table_elements():
-    #         time.sleep(1)
-    #         print(x)
-    #     # t.tabulate_data()
-    website = "./view_page.html"
+    website = "http://tehamapublic.countyrecords.com/scripts/hfweb.asp?formuser=public&Application=TEH"
     with Tahema(website) as t:
-        for rows in t.parse_view_page():
-            print(rows)
+        t.get_official_records()
+        t.search_by_recording_date("12/01/2016", "12/01/2016")
+        tops = list(itertools.islice(t.tabulate_data(), 5))
+        print(tops)
+    # website = "./view_page.html"
+    # with Tahema(website) as t:
+    #     for rows in t.parse_view_page():
+    #         print(rows)

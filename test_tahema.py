@@ -39,14 +39,15 @@ class CrawlerTest(unittest.TestCase):
         with Tahema(website) as t:
             data = [single_data for single_data in t._get_all_table_elements()]
             tops = list(itertools.islice(data, 50))
-            print(tops)
             view_indices = (i for i, item in enumerate(tops) if "VIEW" in item)
-            print("view_indices", view_indices)
-            grouped_data = t.get_grouped_data(tops, view_indices)
-            print("grouped_data", grouped_data)
-            self.assertEqual(grouped_data,
-                [[0, 1, 2, 3, 4], [13, 14, 15, 16, 17], [26, 27, 28, 29, 30], [39, 40, 41, 42, 43], [52, 53, 54, 55, 56], [65, 66, 67, 68, 69], [78, 79, 80, 81, 82]],
+            grouped_data = [item for view_indx in view_indices for item in t.get_grouped_data(tops, view_indx)]
+            print(list(grouped_data))
+            self.assertEqual(len(list(grouped_data)),
+                1,
                 'test for get_grouped_data')
+            self.assertEqual(len(list(grouped_data)[0]),
+                1,
+                'message')
 
     def test_tabulate_data(self):
         website = "./tahema_county_table_data.html"
