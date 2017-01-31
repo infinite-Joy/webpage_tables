@@ -7,7 +7,7 @@ from selenium.webdriver.common.keys import Keys
 
 current_working_dir = os.getcwd()
 
-rate = 0
+rate = 1
 
 
 def log_it(e):
@@ -80,31 +80,36 @@ class Tahema(object):
                 else:
                     yield cell_text
 
-    def get_grouped_data(self, data, view_indx):
-        # return ([data[i + j] for j in range(5)] for i in view_indices)
-        while True:
-            grouped_data = []
-            k = [data[view_indx + j] for j in range(5)]
-            grouped_data.append(k)
+    def get_grouped_data(self, uncleaned_data, view_indices):
+        # return ([uncleaned_data[i + j] for j in range(5)] for i in view_indices)
+        for view_indx in view_indices:
+            # k = [uncleaned_data[view_indx + j] for j in range(5)]
+            k = []
+            for j in range(5):
+                l = uncleaned_data[view_indx + j]
+                k.append(l)
+            yield k
             try:
                 if self.check_instrument_type(k):
                     self.click_on_view(k)
                     parsed_view_page_table = self.parse_view_page()
-                    grouped_data.append(self.clean_view_page_data(parsed_view_page_table))
+                    yield self.clean_view_page_data(parsed_view_page_table)
                     # self.driver.key_down(Keys.CONTROL).send_keys(key.LEFT).key_up(Keys.CONTROL).perform()
                     self.driver.send_keys(Keys.LEFT_ALT) # go back
             except TypeError:
                 pass
-            yield grouped_data
 
-    def tabulate_data(self):
+    def data_and_indices(self):
+        data = [single_data for single_data in self._get_all_table_elements()]
+        view_indices = (i for i, item in enumerate(data) if "VIEW" in item)
+        return (data, view_indices)
+
+    def tabulate_data(self, data, view_indices):
         """
         clean the tabular data from the website and give a list of lists
         """
-        data = [single_data for single_data in self._get_all_table_elements()]
-        view_indices = (i for i, item in enumerate(data) if "VIEW" in item)
-        for i in view_indices:
-            yield self.get_grouped_data(data, view_indices)
+        for view_indx in view_indices:
+            yield self.get_grouped_data(data, view_indx)
         # grouped_data = self.get_grouped_data(data, view_indices)
         # return grouped_data
 
@@ -163,8 +168,9 @@ if __name__ == '__main__':
     with Tahema(website) as t:
         t.get_official_records()
         t.search_by_recording_date("12/01/2016", "12/01/2016")
-        tops = list(itertools.islice(t.tabulate_data(), 5))
-        print(tops)
+        data, indices = t.data_and_indices()
+        for data in t.tabulate_data(data, indices):
+            print(list(data))
     # website = "./view_page.html"
     # with Tahema(website) as t:
     #     for rows in t.parse_view_page():
