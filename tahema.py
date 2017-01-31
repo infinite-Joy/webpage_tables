@@ -7,6 +7,8 @@ from selenium.webdriver.common.keys import Keys
 
 current_working_dir = os.getcwd()
 
+rate = 0
+
 
 def log_it(e):
     pass
@@ -61,7 +63,7 @@ class Tahema(object):
         search_button = self.driver.find_element_by_xpath(search_button_xpath)
 
         # before each call there is a rate limiter of 1 second
-        time.sleep(1)
+        time.sleep(rate)
         search_button.click()
 
     def _get_all_table_elements(self):
@@ -120,7 +122,7 @@ class Tahema(object):
             view_element = row[0][0]
 
             # before each call there is a rate limiter of 1 second
-            time.sleep(3)
+            time.sleep(rate)
             view_element.click()
 
     def parse_view_page(self):
