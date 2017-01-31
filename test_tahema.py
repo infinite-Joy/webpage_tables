@@ -44,6 +44,9 @@ class CrawlerTest(unittest.TestCase):
             grouped_data = []
             for item in t.get_grouped_data(tops, view_indices):
                 grouped_data.append(item)
+            self.assertEqual(grouped_data,
+                "",
+                'grouped data')
             self.assertEqual(len(grouped_data),
                 1,
                 'test for get_grouped_data')
