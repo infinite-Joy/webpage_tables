@@ -84,6 +84,7 @@ class Tahema(object):
             try:
                 if self.check_instrument_type(k):
                     self.click_on_view(k)
+                    print("current_url",self.browser.current_url)
                     parsed_view_page_table = self.parse_view_page()
                     grouped_data.append(self.clean_view_page_data(parsed_view_page_table))
                     # self.driver.key_down(Keys.CONTROL).send_keys(key.LEFT).key_up(Keys.CONTROL).perform()
