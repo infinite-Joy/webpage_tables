@@ -84,10 +84,11 @@ class Tahema(object):
         # return ([uncleaned_data[i + j] for j in range(5)] for i in view_indices)
         for view_indx in view_indices:
             # k = [uncleaned_data[view_indx + j] for j in range(5)]
-            k = []
-            for j in range(5):
-                l = uncleaned_data[view_indx + j]
-                k.append(l)
+            # k = []
+            # for j in range(5):
+            #     l = uncleaned_data[view_indx + j]
+            #     k.append(l)
+            k = [uncleaned_data[view_indx + j] for j in range(5)]
             yield k
             try:
                 if self.check_instrument_type(k):
