@@ -4,6 +4,7 @@ import time
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import WebDriverException
 
 current_working_dir = os.getcwd()
 
@@ -85,17 +86,19 @@ class Tahema(object):
         for view_indx in view_indices:
             k = [uncleaned_data[view_indx + j] for j in range(5)]
             yield k
-            # try:
-            if self.check_instrument_type(k):
-                self.click_on_view(k)
-                print("after view page", self.driver.current_url)
-                parsed_view_page_table = self.parse_view_page()
-                yield self.clean_view_page_data(parsed_view_page_table)
-                # self.driver.key_down(Keys.CONTROL).send_keys(key.LEFT).key_up(Keys.CONTROL).perform()
-                self.driver.send_keys(Keys.LEFT_ALT) # go back
-                print("after making the back button", self.driver.current_url)
-            # except TypeError as err:
-                # print(err)
+            try:
+                if self.check_instrument_type(k):
+                    self.click_on_view(k)
+                    print("after view page", self.driver.current_url)
+                    parsed_view_page_table = self.parse_view_page()
+                    yield self.clean_view_page_data(parsed_view_page_table)
+                    # self.driver.key_down(Keys.CONTROL).send_keys(key.LEFT).key_up(Keys.CONTROL).perform()
+                    # self.driver.send_keys(Keys.LEFT_ALT) # go back
+                    self.driver.back()
+                    self.driver.find_element_by_tag_name('body').send_keys(Keys.ENTER) 
+                    print("after making the back button", self.driver.current_url)
+            except TypeError as err:
+                print(err)
 
     def data_and_indices(self):
         data = [single_data for single_data in self._get_all_table_elements()]
@@ -114,12 +117,15 @@ class Tahema(object):
         """
         user sees that the instrument type is DEED and clicks on view_element
         """
-        if self.check_instrument_type(row):
-            view_element = row[0][0]
+        view_element = row[0][0]
 
-            # before each call there is a rate limiter of 1 second
-            time.sleep(rate)
+        # before each call there is a rate limiter of 1 second
+        time.sleep(rate)
+        try:
             view_element.click()
+        except WebDriverException:
+            print("Element is not clickable")
+
 
     def parse_view_page(self):
         """
@@ -146,7 +152,7 @@ class Tahema(object):
                 key = parsed_view_page_table[i]
                 val = parsed_view_page_table[i+1]
                 documents[key] = val
-            except (IndexError, TypeError):
+            except IndexError:
                 return documents
 
     def build_csv(self, grouped_data):
