@@ -40,13 +40,15 @@ class CrawlerTest(unittest.TestCase):
             data = [single_data for single_data in t._get_all_table_elements()]
             tops = list(itertools.islice(data, 50))
             view_indices = (i for i, item in enumerate(tops) if "VIEW" in item)
-            # grouped_data = [item for view_indx in view_indices for item in t.get_grouped_data(tops, view_indx)]
-            grouped_data = []
-            for item in t.get_grouped_data(tops, view_indices):
-                grouped_data.append(item)
-            self.assertEqual(grouped_data,
-                "",
-                'grouped data')
+            grouped_data = list(t.get_grouped_data(tops, view_indices))
+
+            # tests
+            self.assertEqual(grouped_data[0][0][1],
+                "VIEW",
+                'the first element description')
+            self.assertEqual(grouped_data[0][1:],
+                ['2016014255', 'DEED OF TRUST', '12/01/2016', 'MILLER, EVELYN'],
+                'the rest of the elements')
             self.assertEqual(len(grouped_data),
                 1,
                 'test for get_grouped_data')
