@@ -85,15 +85,17 @@ class Tahema(object):
         for view_indx in view_indices:
             k = [uncleaned_data[view_indx + j] for j in range(5)]
             yield k
-            try:
-                if self.check_instrument_type(k):
-                    self.click_on_view(k)
-                    parsed_view_page_table = self.parse_view_page()
-                    yield self.clean_view_page_data(parsed_view_page_table)
-                    # self.driver.key_down(Keys.CONTROL).send_keys(key.LEFT).key_up(Keys.CONTROL).perform()
-                    self.driver.send_keys(Keys.LEFT_ALT) # go back
-            except TypeError:
-                pass
+            # try:
+            if self.check_instrument_type(k):
+                self.click_on_view(k)
+                print("after view page", self.driver.current_url)
+                parsed_view_page_table = self.parse_view_page()
+                yield self.clean_view_page_data(parsed_view_page_table)
+                # self.driver.key_down(Keys.CONTROL).send_keys(key.LEFT).key_up(Keys.CONTROL).perform()
+                self.driver.send_keys(Keys.LEFT_ALT) # go back
+                print("after making the back button", self.driver.current_url)
+            # except TypeError as err:
+                # print(err)
 
     def data_and_indices(self):
         data = [single_data for single_data in self._get_all_table_elements()]
@@ -136,8 +138,18 @@ class Tahema(object):
     def clean_view_page_data(self, parsed_view_page_table):
         """create the list of documents"""
         start = self.get_starting_index(parsed_view_page_table)
-        documents = {parsed_view_page_table[i]: parsed_view_page_table[i+1] for i in range(start, start + 11, 2)}
-        return documents
+        print(start)
+        documents = {}
+        for i in range(start, start + 20, 2):
+            try:
+                print(parsed_view_page_table[i])
+                documents[parsed_view_page_table[i]] = parsed_view_page_table[i+1]
+                print(documents)
+            except TypeError:
+                print(documents)
+                return documents
+        # documents = {parsed_view_page_table[i]: parsed_view_page_table[i+1] for i in range(start, start + 11, 2)}
+        # return documents
 
     def build_csv(self, grouped_data):
         pass
