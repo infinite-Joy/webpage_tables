@@ -89,7 +89,7 @@ class CrawlerTest(unittest.TestCase):
             res = t.clean_view_page_data(table_text)
             print(res)
             self.assertEqual(len(res),
-                6,
+                10
                 'only valid tabular data should come of the view page')
 
 

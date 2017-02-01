@@ -1,5 +1,5 @@
 import os
-import  itertools
+import itertools
 import time
 
 from selenium import webdriver
@@ -138,18 +138,14 @@ class Tahema(object):
     def clean_view_page_data(self, parsed_view_page_table):
         """create the list of documents"""
         start = self.get_starting_index(parsed_view_page_table)
-        print(start)
         documents = {}
-        for i in range(start, start + 20, 2):
+        for i in itertools.count(start=start, step=2):
             try:
-                print(parsed_view_page_table[i])
-                documents[parsed_view_page_table[i]] = parsed_view_page_table[i+1]
-                print(documents)
-            except TypeError:
-                print(documents)
+                key = parsed_view_page_table[i]
+                val = parsed_view_page_table[i+1]
+                documents[key] = val
+            except IndexError:
                 return documents
-        # documents = {parsed_view_page_table[i]: parsed_view_page_table[i+1] for i in range(start, start + 11, 2)}
-        # return documents
 
     def build_csv(self, grouped_data):
         pass
