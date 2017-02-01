@@ -56,12 +56,6 @@ class CrawlerTest(unittest.TestCase):
                 5,
                 'message')
 
-    def test_tabulate_data(self):
-        website = "./tahema_county_table_data.html"
-        with Tahema(website) as t:
-            tops = list(itertools.islice(t.tabulate_data(), 5))
-            self.assertEqual(tops[0][0][1], "VIEW", 'view element and view text')
-
     def test_check_instrument_type(self):
         row = ['VIEW', '2016014255', 'DEED OF TRUST', '12/01/2016', 'MILLER, EVELYN']
         self.assertTrue(Tahema.check_instrument_type(row),

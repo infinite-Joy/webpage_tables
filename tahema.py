@@ -100,15 +100,6 @@ class Tahema(object):
         view_indices = (i for i, item in enumerate(data) if "VIEW" in item)
         return (data, view_indices)
 
-    def tabulate_data(self, data, view_indices):
-        """
-        clean the tabular data from the website and give a list of lists
-        """
-        for view_indx in view_indices:
-            yield self.get_grouped_data(data, view_indx)
-        # grouped_data = self.get_grouped_data(data, view_indices)
-        # return grouped_data
-
     @staticmethod
     def check_instrument_type(row):
         """
@@ -143,7 +134,7 @@ class Tahema(object):
                 return i
 
     def clean_view_page_data(self, parsed_view_page_table):
-
+        """create the list of documents"""
         start = self.get_starting_index(parsed_view_page_table)
         documents = {parsed_view_page_table[i]: parsed_view_page_table[i+1] for i in range(start, start + 11, 2)}
         return documents
@@ -165,8 +156,8 @@ if __name__ == '__main__':
         t.get_official_records()
         t.search_by_recording_date("12/01/2016", "12/01/2016")
         data, indices = t.data_and_indices()
-        for data in t.tabulate_data(data, indices):
-            print(list(data))
+        for data in t.get_grouped_data(data, indices):
+            print(data)
     # website = "./view_page.html"
     # with Tahema(website) as t:
     #     for rows in t.parse_view_page():
