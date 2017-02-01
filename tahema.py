@@ -139,12 +139,14 @@ class Tahema(object):
         """create the list of documents"""
         start = self.get_starting_index(parsed_view_page_table)
         documents = {}
+        if not start:
+            return
         for i in itertools.count(start=start, step=2):
             try:
                 key = parsed_view_page_table[i]
                 val = parsed_view_page_table[i+1]
                 documents[key] = val
-            except IndexError:
+            except (IndexError, TypeError):
                 return documents
 
     def build_csv(self, grouped_data):
