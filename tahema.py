@@ -46,7 +46,6 @@ class Tahema(object):
         go_xpath = "html/body/div/center/p/input"
         go_element = self.driver.find_element_by_xpath(go_xpath)
         go_element.click()
-        print(self.driver.current_url)
         assert "Official Records thru" in self.driver.page_source
 
     def search_by_recording_date(self, start_date, end_date):
@@ -89,14 +88,12 @@ class Tahema(object):
             try:
                 if self.check_instrument_type(k):
                     self.click_on_view(k)
-                    print("after view page", self.driver.current_url)
                     parsed_view_page_table = self.parse_view_page()
                     yield self.clean_view_page_data(parsed_view_page_table)
                     # self.driver.key_down(Keys.CONTROL).send_keys(key.LEFT).key_up(Keys.CONTROL).perform()
                     # self.driver.send_keys(Keys.LEFT_ALT) # go back
                     self.driver.back()
-                    self.driver.find_element_by_tag_name('body').send_keys(Keys.ENTER) 
-                    print("after making the back button", self.driver.current_url)
+                    self.driver.find_element_by_tag_name('body').send_keys(Keys.ENTER)
             except TypeError as err:
                 print(err)
 
