@@ -1,13 +1,13 @@
 import os
 import itertools
 import time
+import argparse
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import WebDriverException
 
 current_working_dir = os.getcwd()
-
 rate = 1
 
 
@@ -164,14 +164,13 @@ class Tahema(object):
 
 
 if __name__ == '__main__':
-    website = "http://tehamapublic.countyrecords.com/scripts/hfweb.asp?formuser=public&Application=TEH"
-    with Tahema(website) as t:
+    # website = "http://tehamapublic.countyrecords.com/scripts/hfweb.asp?formuser=public&Application=TEH"
+    parser = argparse.ArgumentParser(description='Process some webpages.')
+    parser.add_argument('--url', help='give a valid web url')
+    website = parser.parse_args()
+    with Tahema(website.url) as t:
         t.get_official_records()
         t.search_by_recording_date("12/01/2016", "12/01/2016")
         data, indices = t.data_and_indices()
         for data in t.get_grouped_data(data, indices):
             print(data)
-    # website = "./view_page.html"
-    # with Tahema(website) as t:
-    #     for rows in t.parse_view_page():
-    #         print(rows)
