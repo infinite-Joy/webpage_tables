@@ -12,13 +12,13 @@ class CrawlerTest(unittest.TestCase):
         pass
 
     def test_get_official_records(self):
-        website = "./tahema_home.html"
-        with Tahema(website) as t:
-            t = Tahema(website)
+        website = "./WebpageTables_home.html"
+        with WebpageTables(website) as t:
+            t = WebpageTables(website)
             self.assertTrue("TehamaPublic.CountyRecords.com" in t.driver.title)
 
     def test__get_all_table_elements(self):
-        website = "./tahema_county_table_data.html"
+        website = "./WebpageTables_table_data.html"
 
         def execute_test_case(item):
             try:
@@ -29,14 +29,14 @@ class CrawlerTest(unittest.TestCase):
                 # we only want to see if there is atleast one valid item
                 pass
 
-        with Tahema(website) as t:
+        with WebpageTables(website) as t:
             for item in t._get_all_table_elements():
                 execute_test_case(item)
 
 
     def test_get_grouped_data(self):
-        website = "./tahema_county_table_data.html"
-        with Tahema(website) as t:
+        website = "./WebpageTables_table_data.html"
+        with WebpageTables(website) as t:
             data = [single_data for single_data in t._get_all_table_elements()]
             tops = list(itertools.islice(data, 50))
             view_indices = (i for i, item in enumerate(tops) if "VIEW" in item)
@@ -58,16 +58,16 @@ class CrawlerTest(unittest.TestCase):
 
     def test_check_instrument_type(self):
         row = ['VIEW', '2016014255', 'DEED OF TRUST', '12/01/2016', 'MILLER, EVELYN']
-        self.assertTrue(Tahema.check_instrument_type(row),
+        self.assertTrue(WebpageTables.check_instrument_type(row),
             'row has a deed of trust')
         row = [1, 2, 'DEED', 4, 5]
-        self.assertTrue(Tahema.check_instrument_type(row),
+        self.assertTrue(WebpageTables.check_instrument_type(row),
             'row has check instrument type deed')
 
     @unittest.expectedFailure
     def test_click_on_view(self):
-        website = "./tahema_county_table_data.html"
-        with Tahema(website) as t:
+        website = "./WebpageTables_table_data.html"
+        with WebpageTables(website) as t:
             tops = list(itertools.islice(t.tabulate_data(), 5))
             t.click_on_view(tops[0])
             self.fail(t.driver.current_url,
@@ -77,14 +77,14 @@ class CrawlerTest(unittest.TestCase):
 
     def test_parse_view_page(self):
         website = "./view_page.html"
-        with Tahema(website) as t:
+        with WebpageTables(website) as t:
             table_text = [text for text in t.parse_view_page()]
             self.assertTrue("document not available" in table_text,
                 'should give all the tabular data in view page')
 
     def test_clean_view_page_date(self):
         website = "./view_page.html"
-        with Tahema(website) as t:
+        with WebpageTables(website) as t:
             table_text = [text for text in t.parse_view_page()]
             res = t.clean_view_page_data(table_text)
             print(res)
