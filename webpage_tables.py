@@ -15,7 +15,7 @@ def log_it(e):
     pass
 
 
-class Tahema(object):
+class WebpageTables(object):
     """
     will parse through the webpages of Tahema county website
     and get the relevant information.
@@ -81,21 +81,20 @@ class Tahema(object):
                     yield cell_text
 
     def get_grouped_data(self, uncleaned_data, view_indices):
-        # return ([uncleaned_data[i + j] for j in range(5)] for i in view_indices)
         for view_indx in view_indices:
             k = [uncleaned_data[view_indx + j] for j in range(5)]
             yield k
-            try:
-                if self.check_instrument_type(k):
-                    self.click_on_view(k)
-                    parsed_view_page_table = self.parse_view_page()
-                    yield self.clean_view_page_data(parsed_view_page_table)
-                    # self.driver.key_down(Keys.CONTROL).send_keys(key.LEFT).key_up(Keys.CONTROL).perform()
-                    # self.driver.send_keys(Keys.LEFT_ALT) # go back
-                    self.driver.back()
-                    self.driver.find_element_by_tag_name('body').send_keys(Keys.ENTER)
-            except TypeError as err:
-                print(err)
+
+            # the remaining part will be worked on later
+            # try:
+            #     if self.check_instrument_type(k):
+            #         self.click_on_view(k)
+            #         parsed_view_page_table = self.parse_view_page()
+            #         yield self.clean_view_page_data(parsed_view_page_table)
+            #         self.driver.back()
+            #         self.driver.find_element_by_tag_name('body').send_keys(Keys.ENTER)
+            # except TypeError as err:
+            #     print(err)
 
     def data_and_indices(self):
         data = [single_data for single_data in self._get_all_table_elements()]
@@ -152,9 +151,6 @@ class Tahema(object):
             except IndexError:
                 return documents
 
-    def build_csv(self, grouped_data):
-        pass
-
     def __exit__(self, *args):
         """
         give all the exit code
@@ -164,7 +160,6 @@ class Tahema(object):
 
 
 if __name__ == '__main__':
-    # website = "http://tehamapublic.countyrecords.com/scripts/hfweb.asp?formuser=public&Application=TEH"
     parser = argparse.ArgumentParser(description='Process some webpages.')
     parser.add_argument('--url', help='give a valid web url')
     website = parser.parse_args()

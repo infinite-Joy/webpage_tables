@@ -1,7 +1,7 @@
 import unittest
 import itertools
 
-from tahema import Tahema
+from webpage_tables import WebpageTables
 
 class CrawlerTest(unittest.TestCase):
     def setUp(self):
