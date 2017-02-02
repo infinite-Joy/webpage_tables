@@ -21,7 +21,7 @@ class WebpageTables(object):
     and get the relevant information.
     """
     def __init__(self, website):
-        super(Tahema, self).__init__()
+        super(WebpageTables, self).__init__()
         self.driver = webdriver.PhantomJS("%s/phantomjs" % current_working_dir)
         self.driver.set_window_size(1120, 550)
         self.driver.get(website)
@@ -76,7 +76,7 @@ class WebpageTables(object):
             for cell in cells:
                 cell_text = cell.text
                 if "VIEW" in cell_text:
-                    yield (cell, cell_text)
+                    yield (cell.get_attribute("href"), cell_text)
                 else:
                     yield cell_text
 

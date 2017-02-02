@@ -20,18 +20,18 @@ class CrawlerTest(unittest.TestCase):
     def test__get_all_table_elements(self):
         website = "./WebpageTables_table_data.html"
 
-        def execute_test_case(item):
-            try:
-                if item[2] == 'DEED OF TRUST':
-                    assertTrue(isinstance(item[0], tuple))
-            except IndexError as e:
-                # handling this in case of item not being build.
-                # we only want to see if there is atleast one valid item
-                pass
+        def execute_test_case(items):
+            print(list(items))
+            self.fail('view is gving none with it')
+            self.assertEqual(list(item)[2],
+                'DEE OF TRUST',
+                'the actual second item has deed')
+            self.assertTrue(isinstance(item[0], tuple), 'first item is a tuple')
 
         with WebpageTables(website) as t:
-            for item in t._get_all_table_elements():
-                execute_test_case(item)
+            # for item in t._get_all_table_elements():
+            #     execute_test_case(item)
+            execute_test_case(t._get_all_table_elements())
 
 
     def test_get_grouped_data(self):
@@ -89,7 +89,7 @@ class CrawlerTest(unittest.TestCase):
             res = t.clean_view_page_data(table_text)
             print(res)
             self.assertEqual(len(res),
-                10
+                10,
                 'only valid tabular data should come of the view page')
 
 
